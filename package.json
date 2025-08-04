@@ -9,7 +9,8 @@
     "lint": "next lint",
     "dev:python": "cd dmp-intellisense-source && python3 run.py",
     "dev:modern": "npm run dev:python",
-    "dev:full": "concurrently \"npm run dev:python\" \"npm run dev\""
+    "dev:full": "concurrently \"npm run dev:python\" \"npm run dev\"",
+    "test": "jest"
   },
   "dependencies": {
     "@react-three/drei": "^10.6.1",
@@ -19,7 +20,8 @@
     "next": "15.4.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "three": "^0.172.0"
+    "three": "^0.172.0",
+    "socket.io-client": "^4.7.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -33,6 +35,11 @@
     "eslint": "^9",
     "eslint-config-next": "15.4.5",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.3",
+    "jest-environment-jsdom": "^29.7.0"
   }
 }

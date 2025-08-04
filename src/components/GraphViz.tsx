@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
 import * as THREE from 'three'
+import io, { Socket } from 'socket.io-client'
 
 interface NodeDatum {
   id: string
@@ -32,17 +33,37 @@ export default function GraphViz() {
   const [data, setData] = useState<GraphResponse | null>(null)
   const [hover, setHover] = useState<NodeDatum | null>(null)
   const [query, setQuery] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const worker = useRef<Worker | null>(null)
+  const socket = useRef<Socket | null>(null)
 
   useEffect(() => {
-    fetch('/api/graph/query')
-      .then((res) => res.json())
-      .then((json) => setData(json))
-      .catch(() => setData({ nodes: [], links: [] }))
+    const load = async () => {
+      try {
+        const res = await fetch('/api/graph')
+        const json = await res.json()
+        setData(json)
+      } catch (e) {
+        setError('Failed to load graph')
+        setData({ nodes: [], links: [] })
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+    socket.current = io('http://localhost:3001')
+    socket.current.on('graph-update', (update: GraphResponse) => {
+      setData(update)
+    })
+    return () => {
+      socket.current?.disconnect()
+    }
   }, [])
 
   // initialize web worker for layout
   useEffect(() => {
+    if (typeof window === 'undefined' || typeof Worker === 'undefined') return
     worker.current = new Worker(new URL('./layoutWorker.ts', import.meta.url))
     return () => worker.current?.terminate()
   }, [])
@@ -102,7 +123,9 @@ export default function GraphViz() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      {filtered && (
+      {loading && <div className="p-4">Loading graph…</div>}
+      {error && <div className="p-4 text-red-500">{error}</div>}
+      {!loading && !error && filtered && (
         <Canvas camera={{ position: [0, 0, 50] }}>
           <ambientLight intensity={0.6} />
           <pointLight position={[100, 100, 100]} />

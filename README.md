@@ -74,6 +74,7 @@ npm run dev
 ### 🔧 **API Integration**
 ```javascript
 // Query the knowledge graph
+GET  /api/graph
 POST /api/knowledge/gaps
 POST /api/knowledge/mindmap
 POST /api/discourse/ollama/start
@@ -130,7 +131,7 @@ npm install
 
 # 4. Start services
 python3 run.py &          # DMP-Intellisense (port 5001)
-npm start &               # Node.js API (port 3001)
+npm start &               # Node.js API (port 3001, with Socket.io)
 ```
 
 ## Usage Examples
@@ -220,3 +221,12 @@ node app.js
 
 The Flask application exposes only API endpoints; the previous `/modern` UI has
 been deprecated in favor of the Next.js frontend on port 3000.
+
+## Testing
+
+Run backend and frontend tests:
+
+```bash
+pytest backend/tests/test_integration.py
+npm test
+```
