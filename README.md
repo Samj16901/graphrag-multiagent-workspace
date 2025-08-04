@@ -200,3 +200,23 @@ This system provides a complete DMSMS management solution with cutting-edge AI c
 - [DMP-Intellisense Documentation](dmp-intellisense-source/docs/)
 - [API Integration Guide](INTEGRATION_PLAN.md)
 - [Python Quick Start](PYTHON_QUICKSTART.md)
+
+## Local Backend Setup
+
+The Python and Node.js backends can be run independently for development or
+testing:
+
+```bash
+# Python API (port 5001)
+cd dmp-intellisense-source
+pip install -r requirements.txt
+python run.py
+
+# Node.js proxy (port 3001)
+cd backend
+npm install
+node app.js
+```
+
+The Flask application exposes only API endpoints; the previous `/modern` UI has
+been deprecated in favor of the Next.js frontend on port 3000.
