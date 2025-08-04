@@ -9,6 +9,12 @@ from .graph import graph_service
 bp = Blueprint("api", __name__)
 
 
+@bp.route("/graph/all", methods=["GET"])
+def graph_all():
+    """Return the entire knowledge graph."""
+    return jsonify(graph_service.export_graph())
+
+
 @bp.route("/graph/query", methods=["POST"])
 def graph_query():
     payload = request.get_json(force=True)

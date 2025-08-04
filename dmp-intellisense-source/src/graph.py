@@ -36,6 +36,18 @@ class GraphService:
                 "edges": list(self._graph.edges(node_id)),
             }
 
+    def export_graph(self) -> dict:
+        """Export the entire graph as serialisable node/link structure."""
+        with self._lock:
+            nodes = [
+                {"id": str(n), **attrs} for n, attrs in self._graph.nodes(data=True)
+            ]
+            links = [
+                {"source": str(u), "target": str(v), **attrs}
+                for u, v, attrs in self._graph.edges(data=True)
+            ]
+            return {"nodes": nodes, "links": links}
+
 
 # A single instance used by the routes
 graph_service = GraphService()

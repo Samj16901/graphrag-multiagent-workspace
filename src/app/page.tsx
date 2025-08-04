@@ -9,11 +9,29 @@ export default function Home() {
   const [messages, setMessages] = useState<string[]>([])
   const [input, setInput] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const sendMessage = () => {
-    if (input.trim()) {
-      setMessages((m) => [...m, input])
-      setInput('')
+  const sendMessage = async () => {
+    if (!input.trim()) return
+    const msg = input
+    setMessages((m) => [...m, `You: ${msg}`])
+    setInput('')
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/agents/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Request failed')
+      setMessages((m) => [...m, `Bot: ${json.response}`])
+    } catch (e: any) {
+      setError(e.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -36,6 +54,7 @@ export default function Home() {
               <div key={i} className="mb-1">{m}</div>
             ))}
           </div>
+          {error && <div className="text-red-500 mb-2">{error}</div>}
           <input
             className="text-black p-1 w-full mb-2"
             value={input}
@@ -44,9 +63,10 @@ export default function Home() {
           />
           <button
             onClick={sendMessage}
-            className="bg-blue-600 px-4 py-1 rounded text-white"
+            disabled={loading}
+            className="bg-blue-600 px-4 py-1 rounded text-white disabled:opacity-50"
           >
-            Send
+            {loading ? 'Sending…' : 'Send'}
           </button>
         </div>
         <div className="bg-gray-800 p-4 rounded">

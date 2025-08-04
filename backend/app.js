@@ -2,10 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
+const { Server } = require('socket.io');
 const MultiAgentService = require('./services/multiAgentService');
 
 const app = express();
 const port = process.env.PORT || 3001;
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: '*' } });
+io.on('connection', () => console.log('📡 Socket client connected'));
 
 // simple file logger
 const logDir = path.join(__dirname, 'logs');
@@ -98,6 +103,20 @@ app.post('/api/agents/conversation/start', async (req, res) => {
   }
 });
 
+// Retrieve full knowledge graph
+app.get('/api/graph', async (req, res) => {
+  try {
+    const axios = require('axios');
+    const response = await axios.get('http://localhost:5001/graph/all');
+    res.json(response.data);
+    io.emit('graph-update', response.data);
+  } catch (error) {
+    console.error('Graph fetch error:', error);
+    logError(error);
+    res.status(502).json({ error: 'Graph service unavailable', details: error.message });
+  }
+});
+
 // Graph RAG endpoints with Ollama integration
 app.post('/api/graphrag/query', async (req, res) => {
   try {
@@ -128,6 +147,7 @@ app.post('/api/knowledge/graph', async (req, res) => {
     // Generate knowledge graph using Ollama
     const graphData = await multiAgentService.generateKnowledgeGraph(topic, content);
     res.json({ success: true, data: graphData });
+    io.emit('graph-update', graphData);
   } catch (error) {
     console.error('Knowledge graph generation error:', error);
     logError(error);
@@ -271,10 +291,6 @@ app.all('/api/dmp/*', async (req, res) => {
 });
 
 // Direct proxy to DMP-Intellisense modern interface
-app.get('/dmp-interface', (req, res) => {
-  res.redirect('http://localhost:5001/modern');
-});
-
 // Proxy specific DMP-Intellisense API endpoints
 app.all('/api/knowledge/*', async (req, res) => {
   try {
@@ -348,23 +364,22 @@ async function startServer() {
     // Initialize multi-agent service
     await multiAgentService.initialize();
     
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log('✅ Backend services initialized successfully');
       console.log(`🌐 Node.js API Server: http://localhost:${port}`);
       console.log('📊 Available endpoints:');
       console.log('   - GET  /health - Health check');
       console.log('   - POST /api/agents/query - Query specific agent');
       console.log('   - GET  /api/agents - List all agents');
+      console.log('   - GET  /api/graph - Retrieve full graph');
       console.log('   - POST /api/graph/query - Graph RAG query (simulated)');
       console.log('   - GET  /api/graph/nodes - Get knowledge graph nodes');
       console.log('   - POST /api/documents/analyze - Analyze documents');
       console.log('   - ALL  /api/dmp/* - Proxy to DMP-Intellisense backend');
       console.log('   - ALL  /api/knowledge/* - Knowledge graph operations');
       console.log('   - ALL  /api/discourse/* - Multi-agent discourse');
-      console.log('   - GET  /dmp-interface - Redirect to DMP-Intellisense UI');
       console.log('');
-      console.log('🔗 DMP-Intellisense Modern Interface: http://localhost:5001/modern');
-      console.log('🔗 DMP-Intellisense Main Canvas: http://localhost:5001');
+      console.log('🔗 DMP-Intellisense API: http://localhost:5001');
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
