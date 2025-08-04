@@ -38,12 +38,24 @@ export default function DmpIntelligencePage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            DMP Intellisense - Interactive Knowledge Graph
-          </h1>
-          <p className="text-gray-300 text-lg">
-            🎯 Drag nodes to explore • 🔍 Hover for details • 👆 Click to focus • ⚡ Powered by D3.js Force Simulation
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-2">
+                DMP Intellisense - Interactive Knowledge Graph
+              </h1>
+              <p className="text-gray-300 text-lg">
+                🎯 Drag nodes to explore • 🔍 Hover for details • 👆 Click to focus • ⚡ Powered by D3.js Force Simulation
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <a
+                href="/ollama-integration"
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2"
+              >
+                🚀 Enhanced Ollama Features
+              </a>
+            </div>
+          </div>
         </div>
         
         {/* Topic Control */}

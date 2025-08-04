@@ -51,7 +51,7 @@ export default function DMPChatInterface() {
       const response = await fetch(`${API_URL}/api/graphrag/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: userMessage.content })
+        body: JSON.stringify({ question: userMessage.content, perspective: 'technical' })
       })
 
       if (!response.ok) throw new Error('Network response was not ok')
@@ -66,6 +66,13 @@ export default function DMPChatInterface() {
       }
 
       setMessages(prev => [...prev, assistantMessage])
+
+      // If there are related nodes, dispatch event to update knowledge graph
+      if (data.relatedNodes && data.relatedNodes.length > 0) {
+        window.dispatchEvent(new CustomEvent('highlightGraphNodes', { 
+          detail: { nodes: data.relatedNodes, query: userMessage.content }
+        }))
+      }
     } catch (err) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),

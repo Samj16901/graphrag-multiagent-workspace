@@ -43,6 +43,8 @@ interface InteractiveKnowledgeGraphProps {
   width?: number
   height?: number
   className?: string
+  onNodeClick?: (node: NodeData) => void
+  onNodeHover?: (node: NodeData | null) => void
 }
 
 export default function InteractiveKnowledgeGraph({
@@ -50,7 +52,9 @@ export default function InteractiveKnowledgeGraph({
   apiUrl = 'http://localhost:3002',
   width = 900,
   height = 600,
-  className = ''
+  className = '',
+  onNodeClick,
+  onNodeHover
 }: InteractiveKnowledgeGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
@@ -332,7 +336,7 @@ export default function InteractiveKnowledgeGraph({
     loadGraphData()
   }, [loadGraphData])
 
-  // Listen for external quick actions
+  // Listen for external quick actions and chat integration
   useEffect(() => {
     const handleGraphData = (e: Event) => {
       const detail = (e as CustomEvent<GraphData>).detail
@@ -346,19 +350,43 @@ export default function InteractiveKnowledgeGraph({
       }
     }
 
+    const handleHighlightNodes = (e: Event) => {
+      const detail = (e as CustomEvent<{ nodes: { id: string; label: string }[], query: string }>).detail
+      if (detail && detail.nodes) {
+        // Highlight related nodes from chat interaction
+        const nodeIds = detail.nodes.map(n => n.id)
+        setSelectedNode(null) // Clear previous selection
+        setHoveredNode(null)
+        
+        // Find matching nodes in graph data and highlight them
+        if (graphData) {
+          const matchingNode = graphData.nodes.find(node => 
+            nodeIds.some(id => node.id.includes(id) || node.label.toLowerCase().includes(id.toLowerCase()))
+          )
+          if (matchingNode) {
+            setSelectedNode(matchingNode)
+            // Scroll to the node visually (simple implementation)
+            console.log(`Highlighting node: ${matchingNode.label} for query: ${detail.query}`)
+          }
+        }
+      }
+    }
+
     const handleReset = () => loadGraphData()
     const handleTogglePhysics = () => setPhysicsEnabled(prev => !prev)
 
     window.addEventListener('knowledgeGraphData', handleGraphData as EventListener)
+    window.addEventListener('highlightGraphNodes', handleHighlightNodes as EventListener)
     window.addEventListener('resetGraphLayout', handleReset)
     window.addEventListener('toggleGraphPhysics', handleTogglePhysics)
 
     return () => {
       window.removeEventListener('knowledgeGraphData', handleGraphData as EventListener)
+      window.removeEventListener('highlightGraphNodes', handleHighlightNodes as EventListener)
       window.removeEventListener('resetGraphLayout', handleReset)
       window.removeEventListener('toggleGraphPhysics', handleTogglePhysics)
     }
-  }, [loadGraphData])
+  }, [loadGraphData, graphData])
 
   // Simple physics simulation
   useEffect(() => {
@@ -513,9 +541,18 @@ export default function InteractiveKnowledgeGraph({
                 transform: `scale(${isHovered ? 1.2 : isSelected ? 1.1 : 1})`
               }}
               onMouseDown={(e) => handleMouseDown(e, node)}
-              onMouseEnter={() => setHoveredNode(node)}
-              onMouseLeave={() => setHoveredNode(null)}
-              onClick={() => setSelectedNode(node)}
+              onMouseEnter={() => {
+                setHoveredNode(node)
+                onNodeHover?.(node)
+              }}
+              onMouseLeave={() => {
+                setHoveredNode(null)
+                onNodeHover?.(null)
+              }}
+              onClick={() => {
+                setSelectedNode(node)
+                onNodeClick?.(node)
+              }}
             >
               {/* Node Circle */}
               <div

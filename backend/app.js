@@ -24,15 +24,27 @@ app.get('/', (req, res) => {
 });
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'healthy',
-    services: {
-      multiAgent: multiAgentService.isInitialized,
-      ollama: 'checking...'
-    },
-    timestamp: new Date().toISOString()
-  });
+app.get('/health', async (req, res) => {
+  try {
+    const ollamaStatus = await multiAgentService.testOllamaConnection();
+    res.json({ 
+      status: 'healthy',
+      services: {
+        multiAgent: multiAgentService.isInitialized,
+        ollama: ollamaStatus ? 'connected' : 'disconnected'
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.json({ 
+      status: 'healthy',
+      services: {
+        multiAgent: multiAgentService.isInitialized,
+        ollama: 'error'
+      },
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // Multi-agent endpoints
@@ -69,6 +81,58 @@ app.post('/api/agents/conversation/start', async (req, res) => {
     res.json(conversation);
   } catch (error) {
     console.error('Conversation start error:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
+// Graph RAG endpoints with Ollama integration
+app.post('/api/graphrag/query', async (req, res) => {
+  try {
+    const { question, perspective = 'technical' } = req.body;
+    
+    if (!question) {
+      return res.status(400).json({ error: 'Question is required' });
+    }
+
+    // Use Ollama to generate a comprehensive DMSMS response
+    const response = await multiAgentService.processGraphRAGQuery(question, perspective);
+    res.json(response);
+  } catch (error) {
+    console.error('GraphRAG query error:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
+app.post('/api/knowledge/graph', async (req, res) => {
+  try {
+    const { topic, content } = req.body;
+    
+    if (!topic) {
+      return res.status(400).json({ error: 'Topic is required' });
+    }
+
+    // Generate knowledge graph using Ollama
+    const graphData = await multiAgentService.generateKnowledgeGraph(topic, content);
+    res.json({ success: true, data: graphData });
+  } catch (error) {
+    console.error('Knowledge graph generation error:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
+app.post('/api/document/analyze', async (req, res) => {
+  try {
+    const { content, analysisType = 'comprehensive' } = req.body;
+    
+    if (!content) {
+      return res.status(400).json({ error: 'Content is required' });
+    }
+
+    // Analyze document using Ollama
+    const analysis = await multiAgentService.analyzeDocument(content, analysisType);
+    res.json(analysis);
+  } catch (error) {
+    console.error('Document analysis error:', error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 });

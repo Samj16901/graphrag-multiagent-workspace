@@ -48,6 +48,146 @@ export default function QuickActionsCard() {
           }
           break
         }
+        case 'analyze-document': {
+          // Open document analysis dialog
+          const content = prompt('Enter document content or URL for DMSMS analysis:')
+          if (content) {
+            const response = await fetch(`${API_URL}/api/document/analyze`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ content, analysisType: 'comprehensive' })
+            })
+
+            if (response.ok) {
+              const analysis = await response.json()
+              alert(`Analysis Complete!
+
+Risk Level: ${analysis.riskLevel}
+
+Key Findings:
+${analysis.keyFindings.join('\n')}
+
+Recommendations:
+${analysis.recommendations.join('\n')}`)
+            }
+          }
+          break
+        }
+        case 'ollama-health': {
+          // Check Ollama integration status
+          const response = await fetch(`${API_URL}/health`)
+          if (response.ok) {
+            const status = await response.json()
+            alert(`System Health Check:
+
+Multi-Agent: ${status.services.multiAgent ? '✅ Ready' : '❌ Error'}
+Ollama: ${status.services.ollama === 'connected' ? '✅ Connected' : '❌ Disconnected'}`)
+          }
+          break
+        }
+        case 'generate-knowledge': {
+          // Generate new knowledge graph with Ollama
+          const topic = prompt('Enter topic for knowledge graph generation:', 'DMSMS Analysis')
+          if (topic) {
+            const response = await fetch(`${API_URL}/api/knowledge/graph`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ topic, content: `Comprehensive ${topic} knowledge graph` })
+            })
+
+            if (response.ok) {
+              const data = await response.json()
+              window.dispatchEvent(new CustomEvent('knowledgeGraphData', { detail: data.data }))
+              alert(`Generated new knowledge graph for: ${topic}`)
+            }
+          }
+          break
+        }
+        case 'multi-agent-collaboration': {
+          // Start multi-agent collaboration
+          const topic = prompt('Enter collaboration topic:', 'V-22 Component Obsolescence Risk Assessment')
+          if (topic) {
+            const response = await fetch(`${API_URL}/api/agents/conversation/start`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                topic, 
+                participants: ['research', 'strategy', 'technical', 'communication'] 
+              })
+            })
+
+            if (response.ok) {
+              const data = await response.json()
+              alert(`Started multi-agent collaboration on: ${topic}\nCollaboration ID: ${data.conversationId}`)
+            }
+          }
+          break
+        }
+        case 'ollama-model-test': {
+          // Test Ollama model performance
+          const response = await fetch(`${API_URL}/api/graphrag/query`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              question: 'Perform a quick DMSMS analysis test to verify system functionality',
+              perspective: 'technical' 
+            })
+          })
+
+          if (response.ok) {
+            const data = await response.json()
+            alert(`Ollama Model Test Result:\n\n${data.answer.substring(0, 200)}...\n\nModel is working correctly!`)
+          } else {
+            alert('Ollama model test failed. Please check the connection.')
+          }
+          break
+        }
+        case 'batch-analysis': {
+          // Batch document analysis
+          const files = prompt('Enter number of documents to analyze (simulation):', '3')
+          if (files && parseInt(files) > 0) {
+            const count = parseInt(files)
+            const results = []
+            
+            for (let i = 1; i <= count; i++) {
+              const response = await fetch(`${API_URL}/api/document/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                  content: `Sample DMSMS document ${i} content for batch analysis`,
+                  analysisType: 'comprehensive' 
+                })
+              })
+
+              if (response.ok) {
+                const result = await response.json()
+                results.push(`Doc ${i}: ${result.riskLevel} risk`)
+              }
+            }
+            
+            alert(`Batch Analysis Complete!\n\nResults:\n${results.join('\n')}`)
+          }
+          break
+        }
+        case 'export-conversation': {
+          // Export conversation history
+          const data = {
+            timestamp: new Date().toISOString(),
+            system: 'DMP Intelligence',
+            conversations: 'Sample conversation data would be exported here'
+          }
+          
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = `dmp-conversations-${new Date().toISOString().split('T')[0]}.json`
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+          break
+        }
         case 'reset-layout':
           // Trigger layout reset
           window.dispatchEvent(new CustomEvent('resetGraphLayout'))
@@ -74,6 +214,30 @@ export default function QuickActionsCard() {
       description: 'Reload knowledge graph data'
     },
     {
+      id: 'generate-knowledge',
+      label: 'Generate Graph',
+      icon: '🧠',
+      description: 'Create new graph with Ollama'
+    },
+    {
+      id: 'analyze-document',
+      label: 'Analyze Document',
+      icon: '📄',
+      description: 'AI-powered document analysis'
+    },
+    {
+      id: 'multi-agent-collaboration',
+      label: 'Multi-Agent Chat',
+      icon: '🤖',
+      description: 'Start agent collaboration'
+    },
+    {
+      id: 'ollama-model-test',
+      label: 'Test Ollama',
+      icon: '🧪',
+      description: 'Test model performance'
+    },
+    {
       id: 'export-graph',
       label: 'Export Graph',
       icon: '📁',
@@ -86,10 +250,10 @@ export default function QuickActionsCard() {
       description: 'Reset node positions'
     },
     {
-      id: 'toggle-physics',
-      label: 'Toggle Physics',
-      icon: '⚡',
-      description: 'Enable/disable physics'
+      id: 'ollama-health',
+      label: 'System Health',
+      icon: '❤️',
+      description: 'Check system status'
     }
   ]
 
