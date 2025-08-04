@@ -1,0 +1,26 @@
+{
+  "name": "dmp-graphrag-backend",
+  "version": "1.0.0",
+  "description": "DMP GraphRAG Multi-Agent Backend Service",
+  "main": "app.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "unified": "node unified-dmp-server.js",
+    "dev:unified": "nodemon unified-dmp-server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["dmp", "graphrag", "multi-agent", "ai"],
+  "author": "DMP Team",
+  "license": "MIT"
+}
