@@ -4,10 +4,12 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const { Server } = require('socket.io');
+const axios = require('axios');
 const MultiAgentService = require('./services/multiAgentService');
 
 const app = express();
 const port = process.env.PORT || 3001;
+const PYTHON_BACKEND_URL = process.env.PYTHON_BACKEND_URL || 'http://localhost:5001';
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 io.on('connection', () => console.log('📡 Socket client connected'));
@@ -21,6 +23,16 @@ const logStream = fs.createWriteStream(path.join(logDir, 'backend.log'), { flags
 function logError(err) {
   const message = `[${new Date().toISOString()}] ${err.stack || err}\n`;
   logStream.write(message);
+}
+
+async function emitGraphUpdate() {
+  try {
+    const response = await axios.get(`${PYTHON_BACKEND_URL}/graph/all`);
+    io.emit('graph-update', response.data);
+  } catch (error) {
+    console.error('Graph update broadcast error:', error);
+    logError(error);
+  }
 }
 // Middleware
 app.use(cors());
@@ -74,6 +86,7 @@ app.post('/api/agents/query', async (req, res) => {
 
     const response = await multiAgentService.processMessage(message, agentId, conversationId);
     res.json(response);
+    emitGraphUpdate();
   } catch (error) {
     console.error('Agent query error:', error);
     logError(error);
@@ -104,18 +117,17 @@ app.post('/api/agents/conversation/start', async (req, res) => {
 });
 
 // Retrieve full knowledge graph
-app.get('/api/graph', async (req, res) => {
-  try {
-    const axios = require('axios');
-    const response = await axios.get('http://localhost:5001/graph/all');
-    res.json(response.data);
-    io.emit('graph-update', response.data);
-  } catch (error) {
-    console.error('Graph fetch error:', error);
-    logError(error);
-    res.status(502).json({ error: 'Graph service unavailable', details: error.message });
-  }
-});
+  app.get('/api/graph', async (req, res) => {
+    try {
+      const response = await axios.get(`${PYTHON_BACKEND_URL}/graph/all`);
+      res.json(response.data);
+      io.emit('graph-update', response.data);
+    } catch (error) {
+      console.error('Graph fetch error:', error);
+      logError(error);
+      res.status(502).json({ error: 'Graph service unavailable', details: error.message });
+    }
+  });
 
 // Graph RAG endpoints with Ollama integration
 app.post('/api/graphrag/query', async (req, res) => {
@@ -129,6 +141,7 @@ app.post('/api/graphrag/query', async (req, res) => {
     // Use Ollama to generate a comprehensive DMSMS response
     const response = await multiAgentService.processGraphRAGQuery(question, perspective);
     res.json(response);
+    emitGraphUpdate();
   } catch (error) {
     console.error('GraphRAG query error:', error);
     logError(error);
@@ -166,6 +179,7 @@ app.post('/api/document/analyze', async (req, res) => {
     // Analyze document using Ollama
     const analysis = await multiAgentService.analyzeDocument(content, analysisType);
     res.json(analysis);
+    emitGraphUpdate();
   } catch (error) {
     console.error('Document analysis error:', error);
     logError(error);
@@ -249,6 +263,7 @@ app.post('/api/documents/analyze', async (req, res) => {
       ],
       confidence: 0.89
     });
+    emitGraphUpdate();
   } catch (error) {
     console.error('Document analysis error:', error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
@@ -258,13 +273,11 @@ app.post('/api/documents/analyze', async (req, res) => {
 // Proxy to Python DMP-Intellisense backend
 app.all('/api/dmp/*', async (req, res) => {
   try {
-    const axios = require('axios');
-    const pythonBackendUrl = 'http://localhost:5001'; // Updated to correct port
     const path = req.path.replace('/api/dmp', '');
     
     const config = {
       method: req.method.toLowerCase(),
-      url: `${pythonBackendUrl}${path}`,
+      url: `${PYTHON_BACKEND_URL}${path}`,
       params: req.query,
       timeout: 30000,
       headers: {
@@ -284,7 +297,7 @@ app.all('/api/dmp/*', async (req, res) => {
     console.error('DMP-Intellisense proxy error:', error);
     res.status(502).json({ 
       error: 'DMP-Intellisense backend unavailable',
-      details: 'Make sure the DMP-Intellisense Python service is running on port 5001',
+      details: `Make sure the DMP-Intellisense Python service is running at ${PYTHON_BACKEND_URL}`,
       service: 'DMP-Intellisense Flask App'
     });
   }
@@ -294,12 +307,9 @@ app.all('/api/dmp/*', async (req, res) => {
 // Proxy specific DMP-Intellisense API endpoints
 app.all('/api/knowledge/*', async (req, res) => {
   try {
-    const axios = require('axios');
-    const pythonBackendUrl = 'http://localhost:5001';
-    
     const config = {
       method: req.method.toLowerCase(),
-      url: `${pythonBackendUrl}${req.path}`,
+      url: `${PYTHON_BACKEND_URL}${req.path}`,
       params: req.query,
       timeout: 30000,
       headers: {
@@ -326,12 +336,9 @@ app.all('/api/knowledge/*', async (req, res) => {
 
 app.all('/api/discourse/*', async (req, res) => {
   try {
-    const axios = require('axios');
-    const pythonBackendUrl = 'http://localhost:5001';
-    
     const config = {
       method: req.method.toLowerCase(),
-      url: `${pythonBackendUrl}${req.path}`,
+      url: `${PYTHON_BACKEND_URL}${req.path}`,
       params: req.query,
       timeout: 30000,
       headers: {
@@ -379,7 +386,7 @@ async function startServer() {
       console.log('   - ALL  /api/knowledge/* - Knowledge graph operations');
       console.log('   - ALL  /api/discourse/* - Multi-agent discourse');
       console.log('');
-      console.log('🔗 DMP-Intellisense API: http://localhost:5001');
+      console.log(`🔗 DMP-Intellisense API: ${PYTHON_BACKEND_URL}`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

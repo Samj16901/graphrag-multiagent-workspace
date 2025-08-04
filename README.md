@@ -21,6 +21,7 @@ Modern backend providing:
 - Proxy to DMP-Intellisense services
 - Document analysis services
 - Health monitoring
+- Real-time graph update broadcasts via Socket.io
 
 ### 🌐 **Next.js Frontend** (React - Port 3000)
 Modern web interface (development ready)
@@ -132,7 +133,9 @@ npm install
 # 4. Start services
 python3 run.py &          # DMP-Intellisense (port 5001)
 npm start &               # Node.js API (port 3001, with Socket.io)
-```
+
+### Environment Variables
+- `PYTHON_BACKEND_URL` – override the default `http://localhost:5001` for the Python services
 
 ## Usage Examples
 
