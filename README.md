@@ -43,7 +43,7 @@ npm start
 ```
 **Access:** http://localhost:3001
 
-### 3. Start Next.js Frontend (Optional)
+### 3. Start Next.js Unified Frontend
 ```bash
 npm install
 npm run dev
