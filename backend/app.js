@@ -1,11 +1,22 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const MultiAgentService = require('./services/multiAgentService');
 
 const app = express();
 const port = process.env.PORT || 3001;
 
+// simple file logger
+const logDir = path.join(__dirname, 'logs');
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir);
+}
+const logStream = fs.createWriteStream(path.join(logDir, 'backend.log'), { flags: 'a' });
+function logError(err) {
+  const message = `[${new Date().toISOString()}] ${err.stack || err}\n`;
+  logStream.write(message);
+}
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -60,6 +71,7 @@ app.post('/api/agents/query', async (req, res) => {
     res.json(response);
   } catch (error) {
     console.error('Agent query error:', error);
+    logError(error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 });
@@ -81,6 +93,7 @@ app.post('/api/agents/conversation/start', async (req, res) => {
     res.json(conversation);
   } catch (error) {
     console.error('Conversation start error:', error);
+    logError(error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 });
@@ -99,6 +112,7 @@ app.post('/api/graphrag/query', async (req, res) => {
     res.json(response);
   } catch (error) {
     console.error('GraphRAG query error:', error);
+    logError(error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 });
@@ -116,6 +130,7 @@ app.post('/api/knowledge/graph', async (req, res) => {
     res.json({ success: true, data: graphData });
   } catch (error) {
     console.error('Knowledge graph generation error:', error);
+    logError(error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 });
@@ -133,6 +148,7 @@ app.post('/api/document/analyze', async (req, res) => {
     res.json(analysis);
   } catch (error) {
     console.error('Document analysis error:', error);
+    logError(error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 });
@@ -284,7 +300,8 @@ app.all('/api/knowledge/*', async (req, res) => {
     res.status(response.status).json(response.data);
   } catch (error) {
     console.error('Knowledge API proxy error:', error);
-    res.status(502).json({ 
+    logError(error);
+    res.status(502).json({
       error: 'Knowledge API unavailable',
       details: error.message
     });
@@ -315,7 +332,8 @@ app.all('/api/discourse/*', async (req, res) => {
     res.status(response.status).json(response.data);
   } catch (error) {
     console.error('Discourse API proxy error:', error);
-    res.status(502).json({ 
+    logError(error);
+    res.status(502).json({
       error: 'Discourse API unavailable',
       details: error.message
     });
@@ -350,6 +368,7 @@ async function startServer() {
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
+    logError(error);
     process.exit(1);
   }
 }

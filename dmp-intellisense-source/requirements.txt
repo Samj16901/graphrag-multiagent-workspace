@@ -1,0 +1,4 @@
+flask
+networkx
+faiss-cpu
+python-dotenv
