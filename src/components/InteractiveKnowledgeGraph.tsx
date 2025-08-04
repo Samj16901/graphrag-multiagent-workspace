@@ -61,6 +61,7 @@ export default function InteractiveKnowledgeGraph({
   const [stats, setStats] = useState({ nodes: 0, links: 0, clusters: 0 })
   const [draggedNode, setDraggedNode] = useState<NodeData | null>(null)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+  const [physicsEnabled, setPhysicsEnabled] = useState(false)
 
   // Generate enhanced fallback data with realistic positions
   const generateEnhancedFallbackData = useCallback((): GraphData => {
@@ -330,6 +331,55 @@ export default function InteractiveKnowledgeGraph({
   useEffect(() => {
     loadGraphData()
   }, [loadGraphData])
+
+  // Listen for external quick actions
+  useEffect(() => {
+    const handleGraphData = (e: Event) => {
+      const detail = (e as CustomEvent<GraphData>).detail
+      if (detail) {
+        setGraphData(detail)
+        setStats({
+          nodes: detail.nodes?.length || 0,
+          links: detail.links?.length || 0,
+          clusters: new Set(detail.nodes?.map((n: NodeData) => n.type)).size || 0
+        })
+      }
+    }
+
+    const handleReset = () => loadGraphData()
+    const handleTogglePhysics = () => setPhysicsEnabled(prev => !prev)
+
+    window.addEventListener('knowledgeGraphData', handleGraphData as EventListener)
+    window.addEventListener('resetGraphLayout', handleReset)
+    window.addEventListener('toggleGraphPhysics', handleTogglePhysics)
+
+    return () => {
+      window.removeEventListener('knowledgeGraphData', handleGraphData as EventListener)
+      window.removeEventListener('resetGraphLayout', handleReset)
+      window.removeEventListener('toggleGraphPhysics', handleTogglePhysics)
+    }
+  }, [loadGraphData])
+
+  // Simple physics simulation
+  useEffect(() => {
+    if (!physicsEnabled) return
+
+    const interval = setInterval(() => {
+      setGraphData(prev => {
+        if (!prev) return prev
+        return {
+          ...prev,
+          nodes: prev.nodes.map(node => ({
+            ...node,
+            x: (node.x || 0) + (Math.random() - 0.5) * 5,
+            y: (node.y || 0) + (Math.random() - 0.5) * 5
+          }))
+        }
+      })
+    }, 100)
+
+    return () => clearInterval(interval)
+  }, [physicsEnabled])
 
   // Global mouse event listeners for dragging
   useEffect(() => {

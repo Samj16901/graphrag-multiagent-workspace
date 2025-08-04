@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react'
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'
+
 interface Message {
   id: string
   type: 'user' | 'assistant'
@@ -14,7 +16,8 @@ export default function DMPChatInterface() {
     {
       id: '1',
       type: 'assistant',
-      content: 'Hello! I\'m your DMP Intelligence assistant. I can help you analyze DMSMS data, explore the knowledge graph, and answer questions about obsolescence management.',
+      content:
+        "Hello! I'm your DMP Intelligence assistant. I can help you analyze DMSMS data, explore the knowledge graph, and answer questions about obsolescence management.",
       timestamp: new Date()
     }
   ])
@@ -45,16 +48,20 @@ export default function DMPChatInterface() {
     setIsLoading(true)
 
     try {
-      // Simulate API call to DMP Intelligence backend
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      // Generate contextual response based on input
-      const response = generateDMPResponse(input.trim())
-      
+      const response = await fetch(`${API_URL}/api/graphrag/query`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: userMessage.content })
+      })
+
+      if (!response.ok) throw new Error('Network response was not ok')
+
+      const data = await response.json()
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: response,
+        content: data.answer || 'No response available.',
         timestamp: new Date()
       }
 
@@ -73,38 +80,7 @@ export default function DMPChatInterface() {
     }
   }
 
-  const generateDMPResponse = (userInput: string): string => {
-    const input = userInput.toLowerCase()
-    
-    if (input.includes('graph') || input.includes('node') || input.includes('connection')) {
-      return 'The knowledge graph shows key DMSMS relationships. Try dragging nodes to explore connections, or hover over them for detailed information. The current graph displays 6 core components with 9 interconnections.'
-    }
-    
-    if (input.includes('obsolete') || input.includes('eol') || input.includes('end of life')) {
-      return 'Obsolescence management is critical for DMSMS. Our system tracks End-of-Life (EOL) notices, identifies at-risk components, and recommends mitigation strategies including redesign, lifetime buys, or alternative sourcing.'
-    }
-    
-    if (input.includes('cost') || input.includes('budget') || input.includes('price')) {
-      return 'Cost analysis considers multiple factors: current component prices, projected future costs, redesign expenses, and opportunity costs. Our framework helps optimize total cost of ownership over the system lifecycle.'
-    }
-    
-    if (input.includes('risk') || input.includes('assessment') || input.includes('analysis')) {
-      return 'Risk assessment evaluates supply chain vulnerabilities, technical risks, and business impact. We use a multi-criteria approach considering probability, impact, and time horizon to prioritize mitigation efforts.'
-    }
-    
-    if (input.includes('supplier') || input.includes('vendor') || input.includes('source')) {
-      return 'Supplier management involves monitoring OEM health, diversifying supply sources, and maintaining alternative supplier relationships. Our system tracks supplier viability and recommends sourcing strategies.'
-    }
-    
-    if (input.includes('help') || input.includes('what') || input.includes('how')) {
-      return 'I can help with DMSMS analysis, component obsolescence tracking, cost optimization, risk assessment, and supplier management. Try asking about specific components, mitigation strategies, or graph exploration.'
-    }
-    
-    // Default response
-    return `Based on your query about "${userInput}", I recommend exploring the knowledge graph for related DMSMS concepts. You can also ask me about specific obsolescence scenarios, cost analysis, or risk mitigation strategies.`
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSendMessage()
@@ -114,9 +90,7 @@ export default function DMPChatInterface() {
   return (
     <div className="h-full flex flex-col">
       <div className="mb-4">
-        <h3 className="text-2xl font-bold text-white mb-2">
-          💬 DMP Assistant
-        </h3>
+        <h3 className="text-2xl font-bold text-white mb-2">💬 DMP Assistant</h3>
         <p className="text-gray-300 text-sm">
           Ask about DMSMS analysis, obsolescence management, or explore the knowledge graph
         </p>
@@ -143,7 +117,7 @@ export default function DMPChatInterface() {
             </div>
           </div>
         ))}
-        
+
         {isLoading && (
           <div className="flex justify-start">
             <div className="bg-gray-700 text-gray-100 p-3 rounded-lg">
@@ -154,7 +128,7 @@ export default function DMPChatInterface() {
             </div>
           </div>
         )}
-        
+
         <div ref={messagesEndRef} />
       </div>
 
@@ -163,7 +137,7 @@ export default function DMPChatInterface() {
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
           placeholder="Ask about DMSMS, obsolescence, costs, risks..."
           className="flex-1 p-3 bg-gray-700 text-white rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
           rows={2}
@@ -180,3 +154,4 @@ export default function DMPChatInterface() {
     </div>
   )
 }
+

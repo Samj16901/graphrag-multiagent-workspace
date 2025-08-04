@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'
+
 export default function QuickActionsCard() {
   const [activeAction, setActiveAction] = useState<string | null>(null)
 
@@ -10,14 +12,42 @@ export default function QuickActionsCard() {
     
     try {
       switch (action) {
-        case 'refresh-graph':
-          // Trigger graph refresh
-          window.dispatchEvent(new CustomEvent('refreshKnowledgeGraph'))
+        case 'refresh-graph': {
+          // Fetch latest graph data and broadcast to graph component
+          const response = await fetch(`${API_URL}/api/knowledge/graph`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic: 'DMSMS Knowledge Graph', content: 'DMSMS Knowledge Graph' })
+          })
+
+          if (response.ok) {
+            const data = await response.json()
+            window.dispatchEvent(new CustomEvent('knowledgeGraphData', { detail: data.data }))
+          }
           break
-        case 'export-graph':
-          // Trigger graph export
-          window.dispatchEvent(new CustomEvent('exportKnowledgeGraph'))
+        }
+        case 'export-graph': {
+          // Fetch graph data and trigger download
+          const response = await fetch(`${API_URL}/api/knowledge/graph`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic: 'DMSMS Knowledge Graph', content: 'DMSMS Knowledge Graph' })
+          })
+
+          if (response.ok) {
+            const data = await response.json()
+            const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' })
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = 'knowledge-graph.json'
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            URL.revokeObjectURL(url)
+          }
           break
+        }
         case 'reset-layout':
           // Trigger layout reset
           window.dispatchEvent(new CustomEvent('resetGraphLayout'))
@@ -27,7 +57,7 @@ export default function QuickActionsCard() {
           window.dispatchEvent(new CustomEvent('toggleGraphPhysics'))
           break
       }
-      
+
       // Show action feedback
       setTimeout(() => setActiveAction(null), 1000)
     } catch (error) {
