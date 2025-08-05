@@ -37,11 +37,14 @@ export default function GraphViz() {
   const [error, setError] = useState<string | null>(null)
   const worker = useRef<Worker | null>(null)
   const socket = useRef<Socket | null>(null)
+  const updateBuffer = useRef<GraphResponse | null>(null)
+  const updateTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     const load = async () => {
       try {
         const res = await fetch('/api/graph')
+        if (!res.ok) throw new Error('Graph fetch failed')
         const json = await res.json()
         setData(json)
       } catch (e) {
@@ -52,10 +55,25 @@ export default function GraphViz() {
       }
     }
     load()
-    socket.current = io('http://localhost:3001')
-    socket.current.on('graph-update', (update: GraphResponse) => {
-      setData(update)
+    socket.current = io('http://localhost:3001', {
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000
     })
+    socket.current.on('graph-update', (update: GraphResponse) => {
+      updateBuffer.current = update
+      if (!updateTimer.current) {
+        updateTimer.current = setTimeout(() => {
+          if (updateBuffer.current) setData(updateBuffer.current)
+          updateBuffer.current = null
+          updateTimer.current = null
+        }, 500)
+      }
+    })
+    socket.current.on('connect_error', () => {
+      setError('Socket connection lost, retrying…')
+    })
+    socket.current.on('reconnect', () => setError(null))
     return () => {
       socket.current?.disconnect()
     }
