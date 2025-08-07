@@ -31,7 +31,7 @@ Modern web interface (development ready)
 ### 1. Start DMP-Intellisense (Python Backend)
 ```bash
 cd dmp-intellisense-source
-source .venv/bin/activate
+poetry install
 ./scripts/start_app.sh
 ```
 **Access:** http://localhost:5001/modern
@@ -50,6 +50,28 @@ npm install
 npm run dev
 ```
 **Access:** http://localhost:3000
+
+## Backend Dependency Management with Poetry
+
+The Python backend now uses [Poetry](https://python-poetry.org/) for
+dependency management. Ensure Poetry is installed on your system
+(`curl -sSL https://install.python-poetry.org | python3 -`).
+
+### Install dependencies
+```bash
+cd dmp-intellisense-source
+poetry install
+```
+
+### Run the backend
+```bash
+poetry run python run.py
+```
+
+### Add a new dependency
+```bash
+poetry add <package>
+```
 
 ## Key Features
 
@@ -117,9 +139,7 @@ cd dmp-intellisense-source
 ```bash
 # 1. Setup Python environment
 cd dmp-intellisense-source
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r scripts/requirements.txt
+poetry install
 
 # 2. Install Ollama
 brew install ollama
@@ -131,8 +151,8 @@ cd ../backend
 npm install
 
 # 4. Start services
-python3 run.py &          # DMP-Intellisense (port 5001)
-npm start &               # Node.js API (port 3001, with Socket.io)
+poetry run python run.py &          # DMP-Intellisense (port 5001)
+npm start &                         # Node.js API (port 3001, with Socket.io)
 
 ### Environment Variables
 - `PYTHON_BACKEND_URL` – override the default `http://localhost:5001` for the Python services
@@ -213,8 +233,8 @@ testing:
 ```bash
 # Python API (port 5001)
 cd dmp-intellisense-source
-pip install -r requirements.txt
-python run.py
+poetry install
+poetry run python run.py
 
 # Node.js proxy (port 3001)
 cd backend

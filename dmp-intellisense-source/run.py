@@ -12,6 +12,11 @@ def create_app() -> Flask:
 app = create_app()
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Run the Flask development server."""
     # The Flask UI is deprecated; serve only API endpoints
     app.run(host="0.0.0.0", port=5001)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "dmp-intellisense-core"
+version = "0.1.0"
+description = "Flask backend for the DMP Intellisense system."
+authors = ["DMP Team <team@example.com>"]
+packages = [{ include = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+flask = "^3.0.0"
+networkx = "^3.2.0"
+faiss-cpu = "^1.7.4"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.0"
+black = "^24.3.0"
+flake8 = "^7.0.0"
+
+[tool.poetry.scripts]
+start = "run:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
