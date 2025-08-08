@@ -1,0 +1,29 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Setup",
+      "type": "npm",
+      "script": "setup",
+      "group": "build"
+    },
+    {
+      "label": "Dev (web)",
+      "type": "npm",
+      "script": "dev",
+      "group": "build"
+    },
+    {
+      "label": "Dev (API)",
+      "type": "npm",
+      "script": "dev:api",
+      "group": "build"
+    },
+    {
+      "label": "Dev (Python)",
+      "type": "npm",
+      "script": "dev:py",
+      "group": "build"
+    }
+  ]
+}
