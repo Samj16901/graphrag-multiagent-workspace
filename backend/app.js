@@ -6,6 +6,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const axios = require('axios');
 const MultiAgentService = require('./services/multiAgentService');
+const gitService = require('./services/gitService');
 const { requestToPython, handleError } = require('./services/pythonProxy');
 
 const app = express();
@@ -130,6 +131,87 @@ app.post('/api/agents/conversation/start', async (req, res) => {
   } catch (error) {
     console.error('Conversation start error:', error);
     logError(error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
+// Repository and Git endpoints
+app.get('/api/files/tree', async (req, res) => {
+  try {
+    const tree = await gitService.listTree(req.query.path || '');
+    res.json(tree);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.get('/api/files/get', async (req, res) => {
+  try {
+    const content = await gitService.readFile(req.query.path);
+    res.json({ path: req.query.path, content });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.put('/api/files/put', async (req, res) => {
+  try {
+    const { path: filePath, content } = req.body;
+    await gitService.writeFile(filePath, content);
+    res.json({ path: filePath, status: 'ok' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post('/api/git/commit', async (req, res) => {
+  try {
+    const { message } = req.body;
+    const result = await gitService.commit(message || 'update');
+    res.json({ result });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post('/api/git/branch', async (req, res) => {
+  try {
+    const { name } = req.body;
+    const result = await gitService.branch(name);
+    res.json({ result });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post('/api/git/push', async (req, res) => {
+  try {
+    const { remote = 'origin', branch } = req.body;
+    const result = await gitService.push(remote, branch);
+    res.json({ result });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post('/api/git/pr', async (req, res) => {
+  try {
+    const pr = await gitService.createPullRequest(req.body);
+    res.json(pr);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post('/api/agent/patch', async (req, res) => {
+  try {
+    const { path: filePath, content, instruction } = req.body;
+    if (!filePath || content === undefined || !instruction) {
+      return res.status(400).json({ error: 'path, content and instruction required' });
+    }
+    const modified = `${content}\n\n// Agent suggestion: ${instruction}\n`;
+    res.json({ type: 'file', payload: modified });
+  } catch (error) {
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 });
