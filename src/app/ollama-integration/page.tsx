@@ -7,6 +7,7 @@ import OllamaDocumentAnalyzer from '../../components/OllamaDocumentAnalyzer'
 import OllamaModelManager from '../../components/OllamaModelManager'
 import SystemStatusCard from '../../components/SystemStatusCard'
 import QuickActionsCard from '../../components/QuickActionsCard'
+import { API_BASE } from '@/lib/api'
 
 type TabType = 'overview' | 'chat' | 'analysis' | 'models' | 'graph'
 
@@ -243,7 +244,7 @@ export default function OllamaIntegrationPage() {
                 <div className="bg-gray-800 rounded-lg p-6">
                   <InteractiveKnowledgeGraph 
                     topic="Enhanced DMSMS Knowledge Graph"
-                    apiUrl="http://localhost:3002"
+                    apiUrl={API_BASE}
                     width={900}
                     height={600}
                     onNodeClick={handleNodeClick}

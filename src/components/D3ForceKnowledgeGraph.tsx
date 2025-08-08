@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react'
 import * as d3 from 'd3'
+import { API_BASE } from '@/lib/api'
 
 /**
  * D3ForceKnowledgeGraph - Interactive D3.js-style Knowledge Graph
@@ -50,7 +51,7 @@ interface D3ForceKnowledgeGraphProps {
 
 export default function D3ForceKnowledgeGraph({
   topic = 'DMSMS Knowledge Graph',
-  apiUrl = 'http://localhost:5001',
+  apiUrl = API_BASE,
   width = 800,
   height = 600,
   className = '',

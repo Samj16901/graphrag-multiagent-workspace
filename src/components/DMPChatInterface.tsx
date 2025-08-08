@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'
+import { API_BASE } from '@/lib/api'
+const API_URL = API_BASE
 
 interface Message {
   id: string

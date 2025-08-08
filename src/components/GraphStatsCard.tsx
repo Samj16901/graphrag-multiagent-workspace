@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { API_BASE } from '@/lib/api'
 
 interface GraphStats {
   nodeCount: number
@@ -23,7 +24,7 @@ export default function GraphStatsCard() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('http://localhost:3002/api/knowledge-graph?topic=stats')
+      const response = await fetch(`${API_BASE}/api/knowledge-graph?topic=stats`)
       if (response.ok) {
         const data = await response.json()
         

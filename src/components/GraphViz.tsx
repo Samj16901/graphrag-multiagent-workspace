@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import io, { Socket } from 'socket.io-client'
+import { API_BASE } from '@/lib/api'
 
 interface NodeDatum {
   id: string
@@ -55,7 +56,7 @@ export default function GraphViz() {
       }
     }
     load()
-    socket.current = io('http://localhost:3001', {
+    socket.current = io(API_BASE, {
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000

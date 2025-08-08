@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { API_BASE } from '@/lib/api'
 
 interface SystemStatus {
   unifiedApi: 'online' | 'offline' | 'degraded'
@@ -26,7 +27,7 @@ export default function SystemStatusCard() {
     
     try {
       // Check unified API
-      const response = await fetch('http://localhost:3002/api/health', {
+      const response = await fetch(`${API_BASE}/api/health`, {
         method: 'GET',
         headers: { 'Cache-Control': 'no-cache' }
       })

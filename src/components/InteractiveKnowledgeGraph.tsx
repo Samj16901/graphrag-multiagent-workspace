@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useRef, useEffect, useState, useCallback } from 'react'
+import { API_BASE } from '@/lib/api'
 
 /**
  * InteractiveKnowledgeGraph - Pure React/CSS Knowledge Graph
@@ -49,7 +50,7 @@ interface InteractiveKnowledgeGraphProps {
 
 export default function InteractiveKnowledgeGraph({
   topic = 'DMSMS Knowledge Graph',
-  apiUrl = 'http://localhost:3002',
+  apiUrl = API_BASE,
   width = 900,
   height = 600,
   className = '',

@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "npm run dev:web",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "dev:python": "cd dmp-intellisense-source && python3 run.py",
-    "dev:modern": "npm run dev:python",
-    "dev:full": "concurrently \"npm run dev:python\" \"npm run dev\"",
+    "dev:py": "cd dmp-intellisense-source && poetry run python run.py",
+    "dev:api": "cd backend && node app.js",
+    "dev:web": "next dev --turbopack",
     "test": "jest"
   },
   "dependencies": {

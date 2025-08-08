@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react'
 import * as THREE from 'three'
+import { API_BASE } from '@/lib/api'
 
 /**
  * UnifiedKnowledgeGraph - 3D Knowledge Graph Component
@@ -43,7 +44,7 @@ interface UnifiedKnowledgeGraphProps {
 
 export default function UnifiedKnowledgeGraph({
   topic = 'DMSMS Knowledge Graph',
-  apiUrl = 'http://localhost:3002',
+  apiUrl = API_BASE,
   width = 800,
   height = 600,
   className = ''
