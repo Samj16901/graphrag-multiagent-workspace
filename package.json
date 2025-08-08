@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run dev:web",
+    "setup": "tsx scripts/setup.ts",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "dev:py": "cd dmp-intellisense-source && poetry run python run.py",
     "dev:api": "cd backend && node app.js",
-    "dev:web": "next dev --turbopack",
-    "test": "jest"
+    "test": "jest",
+    "check:env": "node -e \"if(!process.env.NEXT_PUBLIC_API_BASE) throw new Error('NEXT_PUBLIC_API_BASE missing')\""
   },
   "dependencies": {
     "@react-three/drei": "^10.6.1",
@@ -40,6 +41,7 @@
     "@testing-library/jest-dom": "^6.0.0",
     "jest": "^29.7.0",
     "@types/jest": "^29.5.3",
-    "jest-environment-jsdom": "^29.7.0"
+    "jest-environment-jsdom": "^29.7.0",
+    "tsx": "^4.20.3"
   }
 }
