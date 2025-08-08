@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'
+import { API_BASE } from '@/lib/api'
+const API_URL = API_BASE
 
 export default function QuickActionsCard() {
   const [activeAction, setActiveAction] = useState<string | null>(null)

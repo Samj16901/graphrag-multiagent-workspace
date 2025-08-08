@@ -6,6 +6,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const axios = require('axios');
 const MultiAgentService = require('./services/multiAgentService');
+const { requestToPython, handleError } = require('./services/pythonProxy');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -35,7 +36,15 @@ async function emitGraphUpdate() {
   }
 }
 // Middleware
-app.use(cors());
+const allowedOrigins = [/^http:\/\/localhost:\d+$/];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.some(o => o.test(origin))) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  }
+}));
 app.use(express.json());
 app.use(express.static('public'));
 
@@ -54,21 +63,30 @@ app.get('/', (req, res) => {
 // Health check endpoint
 app.get('/health', async (req, res) => {
   try {
-    const ollamaStatus = await multiAgentService.testOllamaConnection();
-    res.json({ 
+    const [ollamaStatus, pythonStatus] = await Promise.all([
+      multiAgentService.testOllamaConnection(),
+      axios
+        .get(`${PYTHON_BACKEND_URL}/health`)
+        .then(() => 'connected')
+        .catch(() => 'disconnected')
+    ]);
+
+    res.json({
       status: 'healthy',
       services: {
         multiAgent: multiAgentService.isInitialized,
-        ollama: ollamaStatus ? 'connected' : 'disconnected'
+        ollama: ollamaStatus ? 'connected' : 'disconnected',
+        python: pythonStatus
       },
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    res.json({ 
+    res.json({
       status: 'healthy',
       services: {
         multiAgent: multiAgentService.isInitialized,
-        ollama: 'error'
+        ollama: 'error',
+        python: 'error'
       },
       timestamp: new Date().toISOString()
     });
@@ -239,127 +257,48 @@ app.get('/api/graph/nodes', (req, res) => {
   res.json({ nodes, totalCount: 3053 });
 });
 
-// Document analysis endpoints
-app.post('/api/documents/analyze', async (req, res) => {
-  try {
-    const { content, type = 'dmp' } = req.body;
-    
-    if (!content) {
-      return res.status(400).json({ error: 'Document content is required' });
-    }
-
-    // Use research agent for document analysis
-    const analysis = await multiAgentService.processMessage(
-      `Analyze this ${type} document: ${content.substring(0, 1000)}...`,
-      'research'
-    );
-
-    res.json({
-      analysis: analysis.response,
-      insights: [
-        'Document contains DMSMS management procedures',
-        'Lifecycle planning strategies identified',
-        'Risk assessment framework present'
-      ],
-      confidence: 0.89
-    });
-    emitGraphUpdate();
-  } catch (error) {
-    console.error('Document analysis error:', error);
-    res.status(500).json({ error: 'Internal server error', details: error.message });
-  }
-});
-
-// Proxy to Python DMP-Intellisense backend
+// Proxy to Python backend
 app.all('/api/dmp/*', async (req, res) => {
   try {
-    const path = req.path.replace('/api/dmp', '');
-    
-    const config = {
-      method: req.method.toLowerCase(),
-      url: `${PYTHON_BACKEND_URL}${path}`,
-      params: req.query,
-      timeout: 30000,
-      headers: {
-        'Content-Type': 'application/json',
-        ...req.headers
-      }
-    };
-
-    // Add body for POST/PUT requests
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
-      config.data = req.body;
-    }
-    
-    const response = await axios(config);
-    res.status(response.status).json(response.data);
-  } catch (error) {
-    console.error('DMP-Intellisense proxy error:', error);
-    res.status(502).json({ 
-      error: 'DMP-Intellisense backend unavailable',
-      details: `Make sure the DMP-Intellisense Python service is running at ${PYTHON_BACKEND_URL}`,
-      service: 'DMP-Intellisense Flask App'
-    });
+    const { status, data } = await requestToPython({ ...req, path: req.path.replace('/api/dmp', '') });
+    res.status(status).json(data);
+  } catch (err) {
+    console.error('DMP-Intellisense proxy error:', err);
+    logError(err);
+    handleError(res, err, 'DMP-Intellisense backend');
   }
 });
 
-// Direct proxy to DMP-Intellisense modern interface
-// Proxy specific DMP-Intellisense API endpoints
 app.all('/api/knowledge/*', async (req, res) => {
   try {
-    const config = {
-      method: req.method.toLowerCase(),
-      url: `${PYTHON_BACKEND_URL}${req.path}`,
-      params: req.query,
-      timeout: 30000,
-      headers: {
-        'Content-Type': 'application/json',
-        ...req.headers
-      }
-    };
-
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
-      config.data = req.body;
-    }
-    
-    const response = await axios(config);
-    res.status(response.status).json(response.data);
-  } catch (error) {
-    console.error('Knowledge API proxy error:', error);
-    logError(error);
-    res.status(502).json({
-      error: 'Knowledge API unavailable',
-      details: error.message
-    });
+    const { status, data } = await requestToPython(req);
+    res.status(status).json(data);
+  } catch (err) {
+    console.error('Knowledge API proxy error:', err);
+    logError(err);
+    handleError(res, err, 'Knowledge API');
   }
 });
 
 app.all('/api/discourse/*', async (req, res) => {
   try {
-    const config = {
-      method: req.method.toLowerCase(),
-      url: `${PYTHON_BACKEND_URL}${req.path}`,
-      params: req.query,
-      timeout: 30000,
-      headers: {
-        'Content-Type': 'application/json',
-        ...req.headers
-      }
-    };
+    const { status, data } = await requestToPython(req);
+    res.status(status).json(data);
+  } catch (err) {
+    console.error('Discourse API proxy error:', err);
+    logError(err);
+    handleError(res, err, 'Discourse API');
+  }
+});
 
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
-      config.data = req.body;
-    }
-    
-    const response = await axios(config);
-    res.status(response.status).json(response.data);
-  } catch (error) {
-    console.error('Discourse API proxy error:', error);
-    logError(error);
-    res.status(502).json({
-      error: 'Discourse API unavailable',
-      details: error.message
-    });
+app.all('/api/documents/*', async (req, res) => {
+  try {
+    const { status, data } = await requestToPython(req);
+    res.status(status).json(data);
+  } catch (err) {
+    console.error('Documents API proxy error:', err);
+    logError(err);
+    handleError(res, err, 'Documents API');
   }
 });
 
@@ -381,10 +320,10 @@ async function startServer() {
       console.log('   - GET  /api/graph - Retrieve full graph');
       console.log('   - POST /api/graph/query - Graph RAG query (simulated)');
       console.log('   - GET  /api/graph/nodes - Get knowledge graph nodes');
-      console.log('   - POST /api/documents/analyze - Analyze documents');
       console.log('   - ALL  /api/dmp/* - Proxy to DMP-Intellisense backend');
       console.log('   - ALL  /api/knowledge/* - Knowledge graph operations');
       console.log('   - ALL  /api/discourse/* - Multi-agent discourse');
+      console.log('   - ALL  /api/documents/* - Document operations');
       console.log('');
       console.log(`🔗 DMP-Intellisense API: ${PYTHON_BACKEND_URL}`);
     });

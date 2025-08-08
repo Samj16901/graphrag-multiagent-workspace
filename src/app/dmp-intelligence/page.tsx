@@ -5,6 +5,7 @@ import DMPChatInterface from '../../components/DMPChatInterface'
 import SystemStatusCard from '../../components/SystemStatusCard'
 import GraphStatsCard from '../../components/GraphStatsCard'
 import QuickActionsCard from '../../components/QuickActionsCard'
+import { API_BASE } from '@/lib/api'
 import { useState } from 'react'
 
 export default function DmpIntelligencePage() {
@@ -88,9 +89,9 @@ export default function DmpIntelligencePage() {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           {/* Knowledge Graph - Main Feature */}
           <div className="xl:col-span-2 bg-gray-800 rounded-lg p-6">
-            <D3ForceKnowledgeGraph 
+            <D3ForceKnowledgeGraph
               topic={graphTopic}
-              apiUrl="http://localhost:3002"
+              apiUrl={API_BASE}
               width={900}
               height={600}
               onNodeClick={handleNodeClick}

@@ -9,7 +9,7 @@
     "dev": "nodemon app.js",
     "unified": "node unified-dmp-server.js",
     "dev:unified": "nodemon unified-dmp-server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test"
   },
   "dependencies": {
     "express": "^4.18.2",

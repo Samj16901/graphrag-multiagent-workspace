@@ -30,26 +30,21 @@ Modern web interface (development ready)
 
 ### 1. Start DMP-Intellisense (Python Backend)
 ```bash
-cd dmp-intellisense-source
-poetry install
-./scripts/start_app.sh
+npm run dev:py
 ```
-**Access:** http://localhost:5001/modern
+Runs on http://localhost:5001
 
 ### 2. Start Node.js API Server
 ```bash
-cd backend
-npm install
-npm start
+npm run dev:api
 ```
-**Access:** http://localhost:3001
+Runs on http://localhost:3001
 
 ### 3. Start Next.js Unified Frontend
 ```bash
-npm install
-npm run dev
+npm run dev:web
 ```
-**Access:** http://localhost:3000
+Runs on http://localhost:3000
 
 ## Backend Dependency Management with Poetry
 
@@ -173,20 +168,14 @@ curl -X POST http://localhost:5001/api/knowledge/gaps \
   -d '{"topic": "component obsolescence"}'
 ```
 
-### Access Modern Interface
-- **DMP-Intellisense UI**: http://localhost:5001/modern
-- **3D Knowledge Graph**: Click "Knowledge Graph" in interface
-- **AI Chat**: Select perspective and start chatting
-- **Document Upload**: Use the upload feature for analysis
-
 ## Key URLs
 
 | Service | URL | Description |
 |---------|-----|-------------|
-| DMP-Intellisense | http://localhost:5001/modern | Main AI interface |
-| Node.js API | http://localhost:3001 | API documentation |
+| Python Backend | http://localhost:5001 | DMP-Intellisense API |
+| Node.js API | http://localhost:3001 | API endpoint |
 | Health Check | http://localhost:3001/health | System status |
-| Knowledge Graph | http://localhost:5001 | Interactive 3D graph |
+| Frontend | http://localhost:3000 | Next.js interface |
 
 ## Development
 
