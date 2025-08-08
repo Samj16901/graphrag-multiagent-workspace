@@ -14,21 +14,27 @@
     "check:env": "node -e \"if(!process.env.NEXT_PUBLIC_API_BASE) throw new Error('NEXT_PUBLIC_API_BASE missing')\""
   },
   "dependencies": {
+    "@isomorphic-git/lightning-fs": "^4.6.2",
     "@react-three/drei": "^10.6.1",
     "@react-three/fiber": "^9.3.0",
     "axios": "^1.7.0",
     "d3": "^7.9.0",
+    "isomorphic-git": "^1.32.3",
     "next": "15.4.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "three": "^0.172.0",
+    "react-resizable-panels": "^3.0.4",
+    "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
-    "socket.io": "^4.7.5"
+    "three": "^0.172.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^16.3.0",
     "@types/d3": "^7.4.3",
+    "@types/jest": "^29.5.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -36,13 +42,10 @@
     "concurrently": "^9.2.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.5",
-    "tailwindcss": "^4",
-    "typescript": "^5",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/jest-dom": "^6.0.0",
     "jest": "^29.7.0",
-    "@types/jest": "^29.5.3",
     "jest-environment-jsdom": "^29.7.0",
-    "tsx": "^4.20.3"
+    "tailwindcss": "^4",
+    "tsx": "^4.20.3",
+    "typescript": "^5"
   }
 }
