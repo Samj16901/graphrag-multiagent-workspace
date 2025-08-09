@@ -48,7 +48,7 @@ export default function GraphViz() {
         if (!res.ok) throw new Error('Graph fetch failed')
         const json = await res.json()
         setData(json)
-      } catch (e) {
+      } catch {
         setError('Failed to load graph')
         setData({ nodes: [], links: [] })
       } finally {
@@ -164,7 +164,7 @@ export default function GraphViz() {
               <meshBasicMaterial color="#4ecdc4" />
             </instancedMesh>
           )}
-          {hover && (
+          {hover && hover.x !== undefined && hover.y !== undefined && hover.z !== undefined && (
             <Html position={[hover.x, hover.y, hover.z]}>
               <div className="bg-gray-800 text-white text-xs p-1 rounded">{hover.id}</div>
             </Html>
