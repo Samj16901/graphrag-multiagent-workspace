@@ -11,7 +11,10 @@
     "dev:py": "cd dmp-intellisense-source && poetry run python run.py",
     "dev:api": "cd backend && node app.js",
     "test": "jest",
-    "check:env": "node -e \"if(!process.env.NEXT_PUBLIC_API_BASE) throw new Error('NEXT_PUBLIC_API_BASE missing')\""
+    "check:env": "node -e \"if(!process.env.NEXT_PUBLIC_API_BASE) throw new Error('NEXT_PUBLIC_API_BASE missing')\"",
+    "start:all": "concurrently \"npm run dev:py\" \"npm run dev:api\" \"npm run dev\"",
+    "status": "pwsh -File check-status.ps1",
+    "start:auto": "pwsh -File start-dmp-system.ps1"
   },
   "dependencies": {
     "@isomorphic-git/lightning-fs": "^4.6.2",

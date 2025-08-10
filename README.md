@@ -24,48 +24,209 @@ Modern backend providing:
 - Real-time graph update broadcasts via Socket.io
 
 ### 🌐 **Next.js Frontend** (React - Port 3000)
-Modern web interface (development ready)
+Modern web interface with 2D/3D graph visualization
 
-## Quick Start
+## 🚀 Complete Startup Guide
 
-### 1. Start DMP-Intellisense (Python Backend)
+Follow these steps **in order** to start the complete system:
+
+### Prerequisites
+
+1. **Node.js** (v18 or higher) - [Download](https://nodejs.org/)
+2. **Python** (v3.9 or higher) - [Download](https://python.org/)
+3. **Poetry** (Python dependency manager) - [Install](https://python-poetry.org/docs/#installation)
+4. **Ollama** (for LLM support) - [Install](https://ollama.ai/)
+
+### Step 1: Environment Setup
+
 ```bash
-npm run dev:py
-```
-Runs on http://localhost:5001
+# Clone and enter the workspace
+git clone <your-repo-url>
+cd graphrag-multiagent-workspace
 
-### 2. Start Node.js API Server
+# Copy environment file
+cp .env.local.example .env.local
+```
+
+### Step 2: Virtual Environment Setup
+
+**Check if Python venv exists, create if needed:**
+
+```bash
+# Windows (PowerShell)
+if (!(Test-Path ".venv")) { 
+    python -m venv .venv 
+}
+.venv\Scripts\Activate.ps1
+
+# macOS/Linux
+if [ ! -d ".venv" ]; then 
+    python3 -m venv .venv 
+fi
+source .venv/bin/activate
+```
+
+### Step 3: Install Dependencies
+
+```bash
+# Install Node.js dependencies (for frontend and backend)
+npm install
+
+# Install Python dependencies with Poetry
+cd dmp-intellisense-source
+poetry install
+cd ..
+```
+
+### Step 4: Start Services (In Order)
+
+**Start all services in separate terminals:**
+
+#### Terminal 1: Python Backend (DMP-Intellisense)
+```bash
+# Activate venv if not already active
+.venv\Scripts\Activate.ps1  # Windows
+# source .venv/bin/activate   # macOS/Linux
+
+npm run dev:py
+# Starts Python Flask server on http://localhost:5001
+```
+
+#### Terminal 2: Node.js API Server
 ```bash
 npm run dev:api
+# Starts Express server on http://localhost:3001
 ```
-Runs on http://localhost:3001
 
-### 3. Start Next.js Unified Frontend
+#### Terminal 3: Next.js Frontend
 ```bash
-npm run dev:web
+npm run dev
+# Starts Next.js dev server on http://localhost:3000
 ```
-Runs on http://localhost:3000
 
-## Backend Dependency Management with Poetry
+### Step 5: Verify Services
 
-The Python backend now uses [Poetry](https://python-poetry.org/) for
-dependency management. Ensure Poetry is installed on your system
-(`curl -sSL https://install.python-poetry.org | python3 -`).
+Open these URLs to verify each service:
+
+- **Frontend**: http://localhost:3000 (main application)
+- **API Server**: http://localhost:3001/api/health (health check)  
+- **Python Backend**: http://localhost:5001/api/graph (graph data)
+
+### Quick Status Check
+
+```powershell
+# Check all services at once
+.\check-status.ps1
+# or
+npm run status
+```
+
+### 🎯 One-Command Startup (Alternative)
+
+For convenience, you can use the provided platform-specific scripts:
+
+**Windows PowerShell:**
+```powershell
+# Automated setup with service monitoring
+.\start-dmp-system.ps1
+```
+
+**Windows Command Prompt:**
+```cmd
+# Simple setup (opens multiple windows)
+start-dmp-system.bat
+```
+
+**macOS/Linux:**
+```bash
+# Make executable and run
+chmod +x start-dmp-system.sh
+./start-dmp-system.sh
+```
+
+These scripts will:
+- ✅ Check prerequisites (Node.js, Python, Poetry)
+- ✅ Create virtual environment if needed
+- ✅ Install all dependencies automatically
+- ✅ Start all services in the correct order
+- ✅ Provide status monitoring and cleanup
+
+## 🔧 Development Workflow
+
+## 🔧 Development Workflow
+
+The Python backend now uses [Poetry](https://python-poetry.org/) for dependency management.
 
 ### Install dependencies
+
 ```bash
 cd dmp-intellisense-source
 poetry install
 ```
 
 ### Run the backend
+
 ```bash
 poetry run python run.py
 ```
 
 ### Add a new dependency
+
 ```bash
 poetry add <package>
+```
+
+## 🛠️ Troubleshooting
+
+### Common Issues and Solutions
+
+#### Port Already in Use
+```bash
+# Kill processes on specific ports
+# Windows
+netstat -ano | findstr :3000
+taskkill /PID <process_id> /F
+
+# macOS/Linux  
+lsof -ti:3000 | xargs kill -9
+```
+
+#### Poetry Not Found
+```bash
+# Install Poetry
+curl -sSL https://install.python-poetry.org | python3 -
+
+# Or using pip
+pip install poetry
+```
+
+#### Python venv Issues
+```bash
+# Remove and recreate venv
+rm -rf .venv  # or rmdir /s .venv on Windows
+python -m venv .venv
+```
+
+#### Node Module Issues
+```bash
+# Clear cache and reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
+
+## 📋 Service Status Check
+
+Use these commands to check if services are running:
+
+```bash
+# Check if ports are in use
+netstat -an | findstr :3000  # Frontend
+netstat -an | findstr :3001  # API Server  
+netstat -an | findstr :5001  # Python Backend
+
+# Test API endpoints
+curl http://localhost:3001/api/health
+curl http://localhost:5001/api/graph
 ```
 
 ## Key Features
