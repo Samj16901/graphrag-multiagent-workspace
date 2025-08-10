@@ -5,7 +5,7 @@ export async function GET() {
   try {
     // Forward request to backend API (Node.js proxy on port 3001)
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:3001'
-    const response = await fetch(`${backendUrl}/api/graph/all`)
+    const response = await fetch(`${backendUrl}/api/graph`)
     
     if (!response.ok) {
       throw new Error(`Backend responded with ${response.status}`)
