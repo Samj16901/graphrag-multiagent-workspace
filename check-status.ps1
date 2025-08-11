@@ -24,7 +24,7 @@ function Test-PortInUse {
     param($port)
     try {
         $connection = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue
-        return $connection -ne $null
+        return $null -ne $connection
     } catch {
         return $false
     }

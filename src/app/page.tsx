@@ -433,9 +433,17 @@ export default function DemoPage() {
   }, [])
 
   const data = useMemo(() => {
-    if (graphData) return graphData
+    // If we have loaded graph data, always use it
+    if (graphData && graphData.nodes && graphData.nodes.length > 0) {
+      console.log('[KG demo][data] Using loaded graph data:', {
+        nodes: graphData.nodes.length, 
+        links: graphData.links.length
+      })
+      return graphData
+    }
     
-    // Fallback mock data during loading
+    // Fallback mock data only during initial loading
+    console.log('[KG demo][data] Using fallback mock data')
     const full = sanitizeGraph(makeLinkedDemo({ seed: 11 }))
     const clipped = clipGraphConnected(full, MAX_START_NODES)
     return clipped
@@ -1133,7 +1141,20 @@ function FG3D({ data, onSelect }: { data: GData, onSelect?: (id: string | null) 
   }, [])
 
   // Use sanitized data to avoid missing-endpoint issues in 3D as well
-  const safeData = useMemo(()=> sanitizeGraph(data), [data])
+  const safeData = useMemo(()=> {
+    const sanitized = sanitizeGraph(data)
+    // Extra safety: ensure we have nodes before returning
+    if (!sanitized.nodes || sanitized.nodes.length === 0) {
+      console.warn('[KG demo][3D] Empty nodes, using fallback')
+      // Return minimal valid graph structure
+      return {
+        nodes: [{ id: 'loading', label: 'Loading...', type: 'system' }],
+        links: []
+      }
+    }
+    console.log(`[KG demo][3D] SafeData: ${sanitized.nodes.length} nodes, ${sanitized.links.length} links`)
+    return sanitized
+  }, [data])
 
   // Degree and neighbor maps for highlighting
   const degree = useMemo(()=>{ const m = new Map<string, number>(); safeData.nodes.forEach(n=>m.set(n.id,0)); safeData.links.forEach(l=>{ const s=idOf(l.source), t=idOf(l.target); m.set(s, (m.get(s)||0)+1); m.set(t, (m.get(t)||0)+1) }); return m },[safeData])
@@ -1151,21 +1172,41 @@ function FG3D({ data, onSelect }: { data: GData, onSelect?: (id: string | null) 
   useEffect(()=>{ 
     if(!ForceGraph3D || !fgRef.current) return; 
     const fg=fgRef.current; 
-    try{ 
-      const linkForce = fg.d3Force('link')
-      if (linkForce && typeof linkForce === 'object' && 'distance' in linkForce) {
-        (linkForce as { distance: (fn: (l: D3Link) => number) => unknown }).distance((l: D3Link) => 70 + (l.type === 'partner_of' ? 20 : 0))
+    
+    // Add a small delay to ensure the graph is fully initialized
+    const timer = setTimeout(() => {
+      try{ 
+        const linkForce = fg.d3Force('link')
+        if (linkForce && typeof linkForce === 'object' && 'distance' in linkForce) {
+          (linkForce as { distance: (fn: (l: D3Link) => number) => unknown }).distance((l: D3Link) => 70 + (l.type === 'partner_of' ? 20 : 0))
+        }
+        const chargeForce = fg.d3Force('charge')
+        if (chargeForce && typeof chargeForce === 'object' && 'strength' in chargeForce) {
+          (chargeForce as { strength: (strength: number) => unknown }).strength(-180)
+        }
+        
+        // Try the new API first, fallback to old API
+        if (typeof fg.d3VelocityDecay === 'function') {
+          fg.d3VelocityDecay(0.28)
+        } else if (fg.d3Force) {
+          // Alternative approach for newer versions
+          const simulation = fg.d3Force('simulation') as any
+          if (simulation && typeof simulation.velocityDecay === 'function') {
+            simulation.velocityDecay(0.28)
+          }
+        }
+        
+        if (typeof fg.d3ReheatSimulation === 'function') {
+          fg.d3ReheatSimulation() 
+        }
+        console.log('[KG demo][3D] Force configuration applied successfully')
+      } catch(error) { 
+        console.warn('[KG demo][3D] Failed to configure d3 forces:', error)
       }
-      const chargeForce = fg.d3Force('charge')
-      if (chargeForce && typeof chargeForce === 'object' && 'strength' in chargeForce) {
-        (chargeForce as { strength: (strength: number) => unknown }).strength(-180)
-      }
-      fg.d3VelocityDecay(0.28)
-      fg.d3ReheatSimulation() 
-    } catch(error) { 
-      console.warn('Failed to configure d3 forces:', error)
-    } 
-  },[ForceGraph3D])
+    }, 100) // Small delay to let the graph initialize
+    
+    return () => clearTimeout(timer)
+  },[ForceGraph3D, safeData]) // Also depend on safeData to reconfigure when data changes
 
   if(!ForceGraph3D){ 
     console.log('ForceGraph3D not loaded, using fallback Graph3D')

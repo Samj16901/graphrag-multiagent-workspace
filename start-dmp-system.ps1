@@ -12,8 +12,12 @@ function Test-Command {
 # Function to check if port is in use
 function Test-Port {
     param($port)
-    $connection = Test-NetConnection -ComputerName localhost -Port $port -WarningAction SilentlyContinue
-    return $connection.TcpTestSucceeded
+    try {
+        $connection = Test-NetConnection -ComputerName localhost -Port $port -WarningAction SilentlyContinue
+        return $connection.TcpTestSucceeded
+    } catch {
+        return $false
+    }
 }
 
 # Function to kill process on port
@@ -91,35 +95,86 @@ Write-Host "🚀 Starting services..." -ForegroundColor Green
 # Start Python backend
 Write-Host "🔄 Starting Python Backend (Port 5001)..." -ForegroundColor Yellow
 $pythonJob = Start-Job -ScriptBlock {
-    Set-Location $args[0]
-    & .\.venv\Scripts\Activate.ps1
-    npm run dev:py
+    param($workingDir)
+    Set-Location $workingDir
+    
+    # Activate virtual environment
+    $venvActivate = Join-Path $workingDir ".venv\Scripts\Activate.ps1"
+    if (Test-Path $venvActivate) {
+        & $venvActivate
+        Write-Output "Virtual environment activated"
+    } else {
+        Write-Error "Virtual environment not found at $venvActivate"
+        return
+    }
+    
+    # Change to Python backend directory
+    $pythonDir = Join-Path $workingDir "dmp-intellisense-source"
+    Set-Location $pythonDir
+    Write-Output "Changed to directory: $pythonDir"
+    
+    # Start Python backend
+    Write-Output "Starting Python backend with Poetry..."
+    poetry run python run.py
 } -ArgumentList $PWD
 
-# Wait a bit for Python backend to start
-Start-Sleep -Seconds 5
+# Wait for Python backend
+Write-Host "⏱️ Waiting for Python backend to initialize..." -ForegroundColor Yellow
+Start-Sleep -Seconds 8
 
 # Start Node.js API server
 Write-Host "🔄 Starting Node.js API Server (Port 3001)..." -ForegroundColor Yellow
 $apiJob = Start-Job -ScriptBlock {
-    Set-Location $args[0]
-    npm run dev:api
+    param($workingDir)
+    Set-Location $workingDir
+    
+    # Change to backend directory
+    $backendDir = Join-Path $workingDir "backend"
+    Set-Location $backendDir
+    Write-Output "Changed to directory: $backendDir"
+    
+    # Start Node.js API
+    Write-Output "Starting Node.js API server..."
+    node app.js
 } -ArgumentList $PWD
 
-# Wait a bit for API server to start
-Start-Sleep -Seconds 3
+# Wait for API server
+Write-Host "⏱️ Waiting for API server to initialize..." -ForegroundColor Yellow
+Start-Sleep -Seconds 5
 
 # Start Next.js frontend
 Write-Host "🔄 Starting Next.js Frontend (Port 3000)..." -ForegroundColor Yellow
 $frontendJob = Start-Job -ScriptBlock {
-    Set-Location $args[0]
+    param($workingDir)
+    Set-Location $workingDir
+    Write-Output "Starting Next.js frontend..."
     npm run dev
 } -ArgumentList $PWD
 
 Write-Host "⏱️ Waiting for services to start..." -ForegroundColor Yellow
-Start-Sleep -Seconds 10
+Start-Sleep -Seconds 15
 
 Write-Host "🔍 Checking service status..." -ForegroundColor Yellow
+
+# Check job status first
+Write-Host "📊 Job Status:" -ForegroundColor Cyan
+Write-Host "Python Job (ID: $($pythonJob.Id)) - State: $($pythonJob.State)" -ForegroundColor Gray
+Write-Host "API Job (ID: $($apiJob.Id)) - State: $($apiJob.State)" -ForegroundColor Gray  
+Write-Host "Frontend Job (ID: $($frontendJob.Id)) - State: $($frontendJob.State)" -ForegroundColor Gray
+
+# Get job outputs for debugging
+if ($pythonJob.State -eq "Failed") {
+    Write-Host "❌ Python job failed. Output:" -ForegroundColor Red
+    Receive-Job $pythonJob
+}
+if ($apiJob.State -eq "Failed") {
+    Write-Host "❌ API job failed. Output:" -ForegroundColor Red
+    Receive-Job $apiJob
+}
+if ($frontendJob.State -eq "Failed") {
+    Write-Host "❌ Frontend job failed. Output:" -ForegroundColor Red
+    Receive-Job $frontendJob
+}
 
 # Check if services are running
 $services = @(
@@ -130,7 +185,7 @@ $services = @(
 
 foreach ($service in $services) {
     try {
-        $response = Invoke-WebRequest -Uri $service.URL -TimeoutSec 5 -UseBasicParsing
+        Invoke-WebRequest -Uri $service.URL -TimeoutSec 5 -UseBasicParsing | Out-Null
         Write-Host "✅ $($service.Name) is running on port $($service.Port)" -ForegroundColor Green
     } catch {
         Write-Host "❌ $($service.Name) is not responding on port $($service.Port)" -ForegroundColor Red

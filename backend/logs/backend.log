@@ -236,3 +236,120 @@
     at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
     at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:03:35.198Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:03:35.245Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:04:03.730Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:04:38.426Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:05:03.738Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:05:33.724Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:06:03.728Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:06:33.728Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:07:03.726Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:07:33.724Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:08:03.724Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:08:33.733Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
+[2025-08-11T00:09:03.721Z] AxiosError: Request failed with status code 404
+    at settle (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:2090:12)
+    at IncomingMessage.handleStreamEnd (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:3207:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1408:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (D:\DMP\graphrag-multiagent-workspace\backend\node_modules\axios\dist\node\axios.cjs:4317:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async D:\DMP\graphrag-multiagent-workspace\backend\app.js:222:24
