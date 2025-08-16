@@ -1,0 +1,20 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Scripts Directory')}}" %}
+  {% set user_goal = "{{user_goal|default('Explain repository utility scripts')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="setup.ts" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Describe <code>setup.ts</code>, which installs dependencies and prepares local configuration for the workspace.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

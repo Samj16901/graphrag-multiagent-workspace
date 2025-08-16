@@ -1,0 +1,20 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Backend Logs')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe backend logging output')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="backend.log" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Explain that <code>backend.log</code> captures server output to help trace API requests and diagnose failures.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

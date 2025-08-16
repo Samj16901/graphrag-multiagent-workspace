@@ -1,0 +1,25 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Intellisense Source Code')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe Python modules providing Intellisense')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="agents.py" />
+    <document src="graph.py" />
+    <document src="routes.py" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Detail the Python modules:
+      - <code>agents.py</code> defines <code>AgentService</code> with <code>process_message</code>.
+      - <code>graph.py</code> implements <code>GraphService</code> with <code>add_node</code>, <code>add_edge</code>, <code>query_node</code>, and <code>export_graph</code>.
+      - <code>routes.py</code> registers Flask blueprints for <code>/graph</code> and <code>/chat</code> endpoints.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

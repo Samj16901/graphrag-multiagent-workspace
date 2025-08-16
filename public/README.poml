@@ -1,0 +1,15 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Public Assets')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe static assets exposed by Next.js')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Document static assets served by Next.js: <code>file.svg</code>, <code>globe.svg</code>, <code>next.svg</code>, <code>vercel.svg</code>, and <code>window.svg</code>.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

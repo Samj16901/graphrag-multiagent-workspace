@@ -1,0 +1,22 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('DMP Intellisense Source')}}" %}
+  {% set user_goal = "{{user_goal|default('Explain Python-based Intellisense core')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="scripts/README.poml" />
+    <document src="src/README.poml" />
+    <document src="run.py" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Summarize the Python Flask-based Intellisense service. Mention <code>run.py</code> as the entrypoint, <code>scripts/start_app.sh</code> for launching, and modules like <code>agents.py</code> for <code>AgentService</code>, <code>graph.py</code> for <code>GraphService</code>, and <code>routes.py</code> exposing REST endpoints.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

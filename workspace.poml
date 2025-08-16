@@ -1,0 +1,26 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('GraphRAG Multi-Agent Workspace')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe repository structure')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="backend/README.poml" />
+    <document src="frontend/README.poml" />
+    <document src="dmp-intellisense-source/README.poml" />
+    <document src="src/README.poml" />
+    <document src="scripts/README.poml" />
+    <document src="outputs/README.poml" />
+    <document src="public/README.poml" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Provide an overview of {{project_name}}. Note that the workspace combines a TypeScript/Next.js frontend in <code>src</code>, a Node.js Express API in <code>backend</code>, and a Python Flask Intellisense service in <code>dmp-intellisense-source</code>. Mention that <code>scripts</code> holds setup utilities, <code>public</code> exposes static assets, and <code>outputs</code> captures runtime logs. Summarize the role of each referenced subdirectory.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

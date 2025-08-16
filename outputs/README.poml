@@ -1,0 +1,20 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Outputs Directory')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe generated output files')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="gap_analyzer_errors.log" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Document generated artifacts. <code>gap_analyzer_errors.log</code> records issues encountered by gap analyzers.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>
