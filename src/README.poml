@@ -1,0 +1,24 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Source Directory')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe frontend application source')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="app/README.poml" />
+    <document src="components/README.poml" />
+    <document src="lib/README.poml" />
+    <document src="workspace/README.poml" />
+    <document src="__tests__/README.poml" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Summarize the Next.js application's source code. Note that <code>app/</code> defines routes and layouts, <code>components/</code> houses UI elements like chat and graph visualizations, <code>lib/api.ts</code> wraps backend calls, and <code>workspace/</code> implements a client-side coding environment built with BrowserFS. Mention that the codebase is written in TypeScript.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

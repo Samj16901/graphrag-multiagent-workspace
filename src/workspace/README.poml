@@ -1,0 +1,21 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Workspace Directory')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe client-side workspace logic')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="WorkspaceCtx.tsx" />
+    <document src="fs/README.poml" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Summarize state management and virtual file system utilities enabling the interactive workspace. Mention that <code>WorkspaceCtx.tsx</code> provides React context for open files and that the nested <code>fs</code> module supplies BrowserFS-based storage.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

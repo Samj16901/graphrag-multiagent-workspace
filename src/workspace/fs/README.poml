@@ -1,0 +1,20 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Workspace FS')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe browser-based file system utilities')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="BrowserFS.ts" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Explain that <code>BrowserFS.ts</code> wraps the BrowserFS library to provide an IndexedDB-backed file system abstraction used by the workspace.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

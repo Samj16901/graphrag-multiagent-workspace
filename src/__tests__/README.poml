@@ -1,0 +1,20 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Source Tests')}}" %}
+  {% set user_goal = "{{user_goal|default('Summarize frontend test coverage')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="GraphViz.test.tsx" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Describe the Jest tests for frontend components. <code>GraphViz.test.tsx</code> ensures the GraphViz renderer initializes and handles graph data correctly.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

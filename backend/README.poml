@@ -1,0 +1,25 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Backend Directory')}}" %}
+  {% set user_goal = "{{user_goal|default('Document backend services')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="services/README.poml" />
+    <document src="tests/README.poml" />
+    <document src="logs/README.poml" />
+    <document src="app.js" />
+    <document src="unified-dmp-server.js" />
+    <document src="test-server.js" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Summarize the Node.js backend. Mention that <code>app.js</code> bootstraps an Express server, <code>unified-dmp-server.js</code> exposes combined routes, and <code>test-server.js</code> provides a lightweight server for tests. Note that <code>services</code> contains git and agent helpers, <code>tests</code> holds unit and integration tests, and <code>logs</code> stores runtime logs.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

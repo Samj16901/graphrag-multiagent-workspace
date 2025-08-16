@@ -1,0 +1,20 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Lib Directory')}}" %}
+  {% set user_goal = "{{user_goal|default('Explain shared utilities and API helpers')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="api.ts" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Describe shared utilities. <code>api.ts</code> wraps fetch calls to backend endpoints for agents, graph data, git operations, and file storage.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

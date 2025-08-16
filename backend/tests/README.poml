@@ -1,0 +1,21 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Backend Tests')}}" %}
+  {% set user_goal = "{{user_goal|default('Explain backend test suite')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="agents.test.js" />
+    <document src="test_integration.py" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Summarize the backend test suite. <code>agents.test.js</code> exercises the MultiAgentService API, while <code>test_integration.py</code> verifies cross-language calls into the Python Intellisense service.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

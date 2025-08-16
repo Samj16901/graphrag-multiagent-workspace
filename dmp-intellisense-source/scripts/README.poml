@@ -1,0 +1,20 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Intellisense Scripts')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe helper scripts for Intellisense')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="start_app.sh" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Describe <code>start_app.sh</code>, which activates the Python environment and runs the Flask app.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>
