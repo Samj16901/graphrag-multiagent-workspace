@@ -1,0 +1,22 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('App Directory')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe Next.js app routes and pages')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="page.tsx" />
+    <document src="layout.tsx" />
+    <document src="api/graph/route.ts" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Detail the Next.js application structure. <code>layout.tsx</code> defines the root layout, <code>page.tsx</code> renders the main dashboard, and the <code>api/</code> directory exposes route handlers such as <code>api/graph/route.ts</code> for graph queries alongside agent, git, and file APIs.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

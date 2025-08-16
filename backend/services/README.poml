@@ -1,0 +1,25 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Backend Services')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe backend utility services')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="gitService.js" />
+    <document src="multiAgentService.js" />
+    <document src="pythonProxy.js" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Describe each service module:
+      - <code>gitService.js</code> offers file operations and Git commands like listTree, readFile, writeFile, commit, branch, push, and createPullRequest.
+      - <code>multiAgentService.js</code> initializes default LLM agents and manages conversations through methods such as initialize, createConversation, and sendMessage.
+      - <code>pythonProxy.js</code> forwards HTTP requests to the Python backend with retry and error handling.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

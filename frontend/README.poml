@@ -1,0 +1,15 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Frontend Directory')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe frontend assets')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Placeholder for future standalone frontend assets; current application code lives under <code>src</code>.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

@@ -1,0 +1,25 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Workspace Components')}}" %}
+  {% set user_goal = "{{user_goal|default('Describe code editor and workspace UI parts')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="CodeEditor.tsx" />
+    <document src="CommandBar.tsx" />
+    <document src="DiffView.tsx" />
+    <document src="EditorTabs.tsx" />
+    <document src="FileExplorer.tsx" />
+    <document src="MarkdownEditor.tsx" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Outline the workspace UI components: <code>CodeEditor.tsx</code> wraps Monaco, <code>CommandBar.tsx</code> exposes actions, <code>DiffView.tsx</code> shows file changes, <code>EditorTabs.tsx</code> manages open files, <code>FileExplorer.tsx</code> navigates the virtual FS, and <code>MarkdownEditor.tsx</code> renders markdown.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>

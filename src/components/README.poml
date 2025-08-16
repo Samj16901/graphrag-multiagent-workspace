@@ -1,0 +1,22 @@
+<poml>
+<parameters>
+  {% set project_name = "{{project_name|default('Components Directory')}}" %}
+  {% set user_goal = "{{user_goal|default('Document reusable UI components')}}" %}
+  {% set variant = "{{variant|default('default')}}" %}
+</parameters>
+<system>
+  <context>
+    <document src="DMPChatInterface.tsx" />
+    <document src="GraphViz.tsx" />
+    <document src="workspace/README.poml" />
+  </context>
+</system>
+<task name="main" enabled="true">
+  <role name="assistant">
+    <instructions>
+      Summarize reusable UI components. Highlight chat interfaces, graph visualizers (e.g., <code>GraphViz.tsx</code>, <code>D3ForceKnowledgeGraph.tsx</code>), model management panels, quick action cards, and workspace tools.
+    </instructions>
+    <output-format>text</output-format>
+  </role>
+</task>
+</poml>
